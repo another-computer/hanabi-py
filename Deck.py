@@ -5,16 +5,18 @@ from random import shuffle
 class Deck(object):
     def __init__(self, multi_color):
         self.deck = []
-        self.colors = ['Red', 'White', 'Yellow', 'Green', 'Blue']
+        self.colors = {'Unknown': '[7;37;48m', 'Red': '[7;31;48m', 'Blue': '[7;34;48m', 'Green': '[7;32;48m',
+                       'Yellow': '[7;33;48m', 'White': '[7;30;48m'}
 
         if multi_color is True:
-            self.colors.append('Rainbow')
+            self.colors['Rainbow'] = '[0;35;48m'
 
         self.numbers = [1, 1, 1, 2, 2, 3, 3, 4, 4, 5]
 
-        for color in self.colors:
-            for number in self.numbers:
-                self.deck.append(Card(color, number))
+        for color in self.colors.keys():
+            if color != 'Unknown':
+                for number in self.numbers:
+                    self.deck.append(Card(color, number))
 
         shuffle(self.deck)
 
@@ -31,12 +33,13 @@ class Deck(object):
 
 
 test = Deck(False)
+
 for card in test.deck:
-    print(card)
+    print(card.__str__(test.colors))
 print(test.cards_remaining)
 
 print('')
-print(test.deck[0])
+print(test.deck[0].__str__(test.colors))
 card = test.draw()
-print(card)
+print(card.__str__(test.colors))
 print(test.cards_remaining)

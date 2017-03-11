@@ -17,8 +17,17 @@ class Card(object):
         self.color_clue = False
         self.number_clue = False
 
-    def __str__(self):
-        return '{}, {}'.format(self.color, self.number)
+    def __str__(self, color_code):
+        color_display = 'Unknown'
+        number_display = ' '
+
+        if self.color_clue is True:
+            color_display = self.color
+
+        if self.number_clue is True:
+            number_display = self.number
+
+        return '\x1b{}'.format(color_code[color_display]) + '{}'.format(number_display) + '\x1b[0m'
 
     def clue_check(self, clue):
         if clue == self.color:
@@ -27,5 +36,18 @@ class Card(object):
         if clue == self.number:
             self.number_clue = True
 
-test = Card('Blue', 5)
-print(test)
+
+if __name__ == '__main__':
+    colors = {'Unknown': '[7;37;48m', 'Red': '[7;31;48m', 'Blue': '[7;34;48m', 'Green': '[7;32;48m',
+              'Yellow': '[7;33;48m', 'White': '[7;30;48m'}
+
+    test = Card('Blue', 5)
+    print(test.__str__(colors))
+    print('')
+
+    test.clue_check('Blue')
+    print(test.__str__(colors))
+    print('')
+
+    test.clue_check(5)
+    print(test.__str__(colors))
