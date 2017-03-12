@@ -11,10 +11,12 @@
 colors = {'Unknown': '[7;37;48m', 'Red': '[7;31;48m', 'Blue': '[7;34;48m', 
           'Green': '[7;32;48m', 'Yellow': '[7;33;48m', 'White': '[7;30;48m',
           'Rainbow': '[0;35;48m'}
+
 numbers = ['1', '2', '3', '4', '5']
 
 
 class Card(object):
+
     def __init__(self, color, number):
         self.color = color
         self.number = number

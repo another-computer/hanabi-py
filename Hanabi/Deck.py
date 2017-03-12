@@ -5,6 +5,7 @@ from random import shuffle
 
 
 class Deck(object):
+
     def __init__(self, difficulty):
         self.cards = []
         self.frequencies = [3, 2, 2, 2, 1]
