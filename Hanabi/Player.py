@@ -1,5 +1,3 @@
-
-
 class Player(object):
 
     def __init__(self):
@@ -38,5 +36,9 @@ if __name__ == '__main__':
     print('')
 
     test.receive_clue('5')
+    print(test.hand)
+    print('')
+
+    test.receive_clue('1')
     print(test.hand)
 
