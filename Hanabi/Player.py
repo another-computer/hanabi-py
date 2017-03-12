@@ -29,7 +29,7 @@ if __name__ == '__main__':
     print(test.hand)
     print('')
 
-    test.hand = [Card('Blue', 1), Card('Red', 2), Card('Green', 5), Card('Yellow', 4), Card('White', 5)]
+    test.hand = [Card('Blue', '1'), Card('Red', '2'), Card('Green', '5'), Card('Yellow', '4'), Card('White', '5')]
     print(test.hand)
     print('')
 
@@ -37,6 +37,6 @@ if __name__ == '__main__':
     print(test.hand)
     print('')
 
-    test.receive_clue(5)
+    test.receive_clue('5')
     print(test.hand)
 
