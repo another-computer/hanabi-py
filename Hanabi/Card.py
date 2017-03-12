@@ -64,5 +64,5 @@ if __name__ == '__main__':
     print(test)
     print('')
 
-    test.clue_check(5)
+    test.clue_check('5')
     print(test)

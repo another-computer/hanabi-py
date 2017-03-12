@@ -10,15 +10,16 @@ class Deck(object):
         self.frequencies = [3, 2, 2, 2, 1]
         self.excluded_colors = ["Unknown"]
 
-        if(difficulty == "Normal"):
+        if difficulty == "Normal":
             self.excluded_colors.append("Rainbow")
-        elif(difficulty == "Difficult"):
+
+        elif difficulty == "Difficult":
             self.frequencies = [1, 1, 1, 1, 1]
 
         for color in colors.keys():
             if color not in self.excluded_colors:
                 for number in numbers:
-                    for x in range(self.frequencies[number - 1]):
+                    for x in range(self.frequencies[int(number) - 1]):
                         self.cards.append(Card(color, number))
 
         shuffle(self.cards)
