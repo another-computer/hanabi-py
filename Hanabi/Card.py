@@ -11,7 +11,8 @@
 colors = {'Unknown': '[7;37;48m', 'Red': '[7;31;48m', 'Blue': '[7;34;48m', 
           'Green': '[7;32;48m', 'Yellow': '[7;33;48m', 'White': '[7;30;48m',
           'Rainbow': '[0;35;48m'}
-numbers = [1, 2, 3, 4, 5]
+numbers = ['1', '2', '3', '4', '5']
+
 
 class Card(object):
     def __init__(self, color, number):
@@ -22,6 +23,18 @@ class Card(object):
         self.number_clue = False
 
     def __str__(self):
+        color_display = 'Unknown'
+        number_display = '?'
+
+        if self.color_clue is True:
+            color_display = self.color
+
+        if self.number_clue is True:
+            number_display = self.number
+
+        return '\x1b{}{}\x1b[0m'.format(colors[color_display], number_display)
+
+    def __repr__(self):
         color_display = 'Unknown'
         number_display = '?'
 
@@ -43,7 +56,7 @@ class Card(object):
 
 if __name__ == '__main__':
 
-    test = Card('Blue', 5)
+    test = Card('Blue', '5')
     print(test)
     print('')
 
