@@ -33,15 +33,15 @@ class Deck(object):
 
         return drawn_card
 
+if __name__ == '__main__':
+    test = Deck("Normal")
 
-test = Deck("Normal")
+    for card in test.cards:
+        print(card)
+    print(test.cards_remaining)
 
-for card in test.cards:
+    print('')
+    print(test.cards[-1])
+    card = test.draw()
     print(card)
-print(test.cards_remaining)
-
-print('')
-print(test.cards[-1])
-card = test.draw()
-print(card)
-print(test.cards_remaining)
+    print(test.cards_remaining)

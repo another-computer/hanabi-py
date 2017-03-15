@@ -25,7 +25,7 @@ class Player(object):
     # I assume card_location is a string with a number since it will be received from the client
     # Also would the player use 0 to reference their first card or 1?
     def get_card(self, card_location):
-        return self.hand.pop(int(card_location))
+        return self.hand.pop(int(card_location) - 1)
 
 if __name__ == '__main__':
     from Hanabi.Card import Card
