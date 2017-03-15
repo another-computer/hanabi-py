@@ -221,4 +221,4 @@ if __name__ == '__main__':
     test.clients = [Client('Andy'), Client('Spencer')]
     test.players = {'Andy': Player(), 'Spencer': Player()}
 
-    test.turn()
+    test.start_game()
