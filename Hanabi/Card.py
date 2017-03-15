@@ -57,13 +57,13 @@ class Card(object):
 
 if __name__ == '__main__':
 
-    test = Card('Blue', '5')
-    print(test)
-    print('')
+  test = Card('Blue', '5')
+  print(test)
+  print('')
 
-    test.clue_check('Blue')
-    print(test)
-    print('')
+  test.clue_check('Blue')
+  print(test)
+  print('')
 
-    test.clue_check('5')
-    print(test)
+  test.clue_check('5')
+  print(test)
