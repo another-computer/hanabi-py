@@ -25,11 +25,8 @@ class Deck(object):
 
         shuffle(self.cards)
 
-        self.cards_remaining = len(self.cards)
-
     def draw(self):
         drawn_card = self.cards.pop()
-        self.cards_remaining = len(self.cards)
 
         return drawn_card
 
@@ -38,10 +35,10 @@ if __name__ == '__main__':
 
     for card in test.cards:
         print(card)
-    print(test.cards_remaining)
+    print(len(test.cards))
 
     print('')
     print(test.cards[-1])
     card = test.draw()
     print(card)
-    print(test.cards_remaining)
+    print(len(test.cards))

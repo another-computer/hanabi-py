@@ -11,12 +11,20 @@ from Player import Player
 #
 # Make a method to end the game and output desired info
 #
-# Need to make colors all lower case letters for easier inputs
+# THIS NEEDS TESTING
 # Need to make it so that the turns continue one cycle after no more cards remain
+#
 # Need to make deck draw empty cards when it's out of cards
+# Make player pop empty spaces automatically, lowering the total number of cards in their hand
+# Make play and discard go from 1 to len(player's hand)
 #
 # Possibly add a true_print or reveal method to Card so that we can easily print the true value without changing it's
 # clue status
+#
+# Make discard pile a dictionary to sort by color
+# Double check how the game deals with playing a 5 at max clues
+#
+# Should I make variables like accepted_action and active_player a part of __init__ and self?
 
 
 class Lobby(object):
@@ -130,7 +138,7 @@ class Lobby(object):
                             print('THE CLUE MUST BE 1, 2, 3, 4, OR 5 DOG')
                             return False
 
-                    elif input_list[3] not in self.foundations.keys():
+                    elif input_list[3].lower() not in self.foundations.keys():
                         print('THE CLUED COLOR MUST BE IN THE GAME BOI')
                         return False
 
@@ -157,7 +165,7 @@ class Lobby(object):
             self.foundations[card.color].append(card)
             self.score += 1
 
-            if card.number == '5':
+            if card.number == '5' and self.clues < 8:
                 self.clues += 1
 
         else:
@@ -179,17 +187,17 @@ class Lobby(object):
     def use_clue(self, input_list):
         self.clues -= 1
 
-        self.players[input_list[2]].receive_clue(input_list[3])
+        self.players[input_list[2]].receive_clue(input_list[3].lower())
 
     def start_game(self):
-        total_players = len(self.clients)
+        final_round = 0
 
         for name in self.players.keys():
             for count in range(5):
                 self.draw(name)
 
         while True:
-            active_player = self.clients[self.turn_number % total_players]
+            active_player = self.clients[self.turn_number % len(self.clients)]
 
             accepted_action = False
 
@@ -207,8 +215,11 @@ class Lobby(object):
                 break
 
             if len(self.deck.cards) == 0:
-                print('OUT OF CARDS SON')
-                break
+                final_round += 1
+
+                if final_round == len(self.players):
+                    print('OUT OF CARDS SON')
+                    break
 
             self.turn_number += 1
 
