@@ -4,10 +4,19 @@ from Card import colors
 from Player import Player
 
 # TO-DO:
-# Make interpreter class to replace interpret_string method
+# Replace the interpret_string method because there has to be a better way to handle that
+#
 # Add wait state before game starts which allows clients to join and ready up
 # Once all clients are ready the game will start (need at least 2 to start)
+#
 # Make a method to end the game and output desired info
+#
+# Need to make colors all lower case letters for easier inputs
+# Need to make it so that the turns continue one cycle after no more cards remain
+# Need to make deck draw empty cards when it's out of cards
+#
+# Possibly add a true_print or reveal method to Card so that we can easily print the true value without changing it's
+# clue status
 
 
 class Lobby(object):
@@ -142,8 +151,7 @@ class Lobby(object):
 
     def play(self, input_list):
         card = self.players[input_list[0]].get_card(input_list[2])
-        card.number_clue = True
-        card.color_clue = True
+        card.reveal()
 
         if len(self.foundations[card.color]) == int(card.number) - 1:
             self.foundations[card.color].append(card)
@@ -160,8 +168,7 @@ class Lobby(object):
 
     def discard(self, input_list):
         card = self.players[input_list[0]].get_card(input_list[2])
-        card.number_clue = True
-        card.color_clue = True
+        card.reveal()
 
         self.clues += 1
 
@@ -170,13 +177,11 @@ class Lobby(object):
         self.draw(input_list[0])
 
     def use_clue(self, input_list):
-
         self.clues -= 1
 
         self.players[input_list[2]].receive_clue(input_list[3])
 
     def start_game(self):
-
         total_players = len(self.clients)
 
         for name in self.players.keys():
@@ -207,6 +212,13 @@ class Lobby(object):
 
             self.turn_number += 1
 
+        self.end_game()
+
+    def end_game(self):
+        print(self.score)
+        print(self.foundations)
+        print(self.discard_pile)
+
 
 # This is a placeholder and is only used to test the lobby
 class Client(object):
@@ -222,3 +234,4 @@ if __name__ == '__main__':
     test.players = {'Andy': Player(), 'Spencer': Player()}
 
     test.start_game()
+    print('ok')

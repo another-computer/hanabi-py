@@ -9,10 +9,10 @@ class Deck(object):
     def __init__(self, difficulty):
         self.cards = []
         self.frequencies = [3, 2, 2, 2, 1]
-        self.excluded_colors = ["Unknown"]
+        self.excluded_colors = ["unknown"]
 
         if difficulty == "Normal":
-            self.excluded_colors.append("Rainbow")
+            self.excluded_colors.append("rainbow")
 
         elif difficulty == "Difficult":
             self.frequencies = [1, 1, 1, 1, 1]

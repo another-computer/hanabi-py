@@ -23,7 +23,6 @@ class Player(object):
     # This is for playing or discarding a card
     # The player will give the lobby the desired card and let the lobby figure out where to put it
     # I assume card_location is a string with a number since it will be received from the client
-    # Also would the player use 0 to reference their first card or 1?
     def get_card(self, card_location):
         return self.hand.pop(int(card_location) - 1)
 

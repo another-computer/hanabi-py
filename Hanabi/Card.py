@@ -8,9 +8,9 @@
 
 # Cards have color, number, and clue status for both
 
-colors = {'Unknown': '[7;37;48m', 'Red': '[7;31;48m', 'Blue': '[7;34;48m', 
-          'Green': '[7;32;48m', 'Yellow': '[7;33;48m', 'White': '[7;30;48m',
-          'Rainbow': '[0;35;48m'}
+colors = {'unknown': '[7;37;48m', 'red': '[7;31;48m', 'blue': '[7;34;48m',
+          'green': '[7;32;48m', 'yellow': '[7;33;48m', 'white': '[7;30;48m',
+          'rainbow': '[0;35;48m'}
 
 numbers = ['1', '2', '3', '4', '5']
 
@@ -25,7 +25,7 @@ class Card(object):
         self.number_clue = False
 
     def __str__(self):
-        color_display = 'Unknown'
+        color_display = 'unknown'
         number_display = '?'
 
         if self.color_clue is True:
@@ -37,7 +37,7 @@ class Card(object):
         return '\x1b{}{}\x1b[0m'.format(colors[color_display], number_display)
 
     def __repr__(self):
-        color_display = 'Unknown'
+        color_display = 'unknown'
         number_display = '?'
 
         if self.color_clue is True:
@@ -55,14 +55,18 @@ class Card(object):
         if clue == self.number:
             self.number_clue = True
 
+    def reveal(self):
+        self.color_clue = True
+        self.number_clue = True
+
 
 if __name__ == '__main__':
 
-    test = Card('Blue', '5')
+    test = Card('blue', '5')
     print(test)
     print('')
 
-    test.clue_check('Blue')
+    test.clue_check('blue')
     print(test)
     print('')
 
