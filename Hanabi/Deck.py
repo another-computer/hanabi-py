@@ -26,7 +26,11 @@ class Deck(object):
         shuffle(self.cards)
 
     def draw(self):
-        drawn_card = self.cards.pop()
+        if len(self.cards) > 0:
+            drawn_card = self.cards.pop()
+
+        else:
+            drawn_card = ''
 
         return drawn_card
 

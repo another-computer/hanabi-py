@@ -12,6 +12,9 @@ class Player(object):
     def draw(self, drawn_card):
         self.hand.insert(0, drawn_card)
 
+        if drawn_card == '':
+            self.hand.pop(0)
+
     def receive_clue(self, clue):
         for card in self.hand:
             if card.color == clue:

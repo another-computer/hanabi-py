@@ -40,6 +40,8 @@ class Card(object):
         color_display = 'unknown'
         number_display = '?'
 
+        # self.reveal()
+
         if self.color_clue is True:
             color_display = self.color
 

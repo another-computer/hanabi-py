@@ -9,19 +9,11 @@ from Player import Player
 # Add wait state before game starts which allows clients to join and ready up
 # Once all clients are ready the game will start (need at least 2 to start)
 #
-# Make a method to end the game and output desired info
-#
-# THIS NEEDS TESTING
-# Need to make it so that the turns continue one cycle after no more cards remain
-#
-# Need to make deck draw empty cards when it's out of cards
-# Make player pop empty spaces automatically, lowering the total number of cards in their hand
-# Make play and discard go from 1 to len(player's hand)
+# Make a method to end the game and output desired info, and clean up the lobby in whatever way is needed
 #
 # Possibly add a true_print or reveal method to Card so that we can easily print the true value without changing it's
 # clue status
 #
-# Make discard pile a dictionary to sort by color
 # Double check how the game deals with playing a 5 at max clues
 #
 # Should I make variables like accepted_action and active_player a part of __init__ and self?
@@ -42,14 +34,11 @@ class Lobby(object):
         for client in self.clients:
             self.players[client.name] = Player()
 
-        # Need to figure this out
-        # Also make it so that drawing from an empty deck yields nothing (empty string)
-
         self.difficulty = 'Normal'
 
         self.deck = Deck(self.difficulty)
 
-        self.discard_pile = []
+        self.discard_pile = {}
 
         self.clues = 8
         self.mistakes = 0
@@ -59,6 +48,7 @@ class Lobby(object):
         for color in colors:
             if color not in self.deck.excluded_colors:
                 self.foundations[color] = []
+                self.discard_pile[color] = []
 
         self.score = 0
 
@@ -91,7 +81,7 @@ class Lobby(object):
 
         elif input_list[1].lower() == 'play':
             if input_list[2].isdigit() is True:
-                if int(input_list[2]) < 1 or int(input_list[2]) > 5:
+                if int(input_list[2]) < 1 or int(input_list[2]) > len(self.players[input_list[0]].hand):
                     print('THE CARD LOCATION MUST BE IN YOUR HAND MY DUDE')
                     return False
 
@@ -106,7 +96,7 @@ class Lobby(object):
         elif input_list[1].lower() == 'discard':
             if self.clues < 8:
                 if input_list[2].isdigit() is True:
-                    if int(input_list[2]) < 1 or int(input_list[2]) > 5:
+                    if int(input_list[2]) < 1 or int(input_list[2]) > len(self.players[input_list[0]].hand):
                         print('THE CARD LOCATION MUST BE IN YOUR HAND MATE')
                         return False
 
@@ -169,7 +159,7 @@ class Lobby(object):
                 self.clues += 1
 
         else:
-            self.discard_pile.append(card)
+            self.discard_pile[card.color].append(card)
             self.mistakes += 1
 
         self.draw(input_list[0])
@@ -180,7 +170,7 @@ class Lobby(object):
 
         self.clues += 1
 
-        self.discard_pile.append(card)
+        self.discard_pile[card.color].append(card)
 
         self.draw(input_list[0])
 
@@ -202,6 +192,14 @@ class Lobby(object):
             accepted_action = False
 
             while accepted_action is False:
+
+                '''print(active_player.name)
+                print('Andy: {}\nSpencer: {}'.format(self.players['Andy'].hand, self.players['Spencer'].hand))
+                print('Cards Remaining: {}, Clues: {}, Mistakes: {}'.format(len(self.deck.cards), self.clues,
+                                                                            self.mistakes))
+                print(self.foundations)
+                print(self.discard_pile)'''
+
                 input_string = active_player.name
                 input_string += ' ' + input('What do?: ')
                 accepted_action = self.interpret_string(input_string)
@@ -217,7 +215,7 @@ class Lobby(object):
             if len(self.deck.cards) == 0:
                 final_round += 1
 
-                if final_round == len(self.players):
+                if final_round == len(self.players) + 1:
                     print('OUT OF CARDS SON')
                     break
 
