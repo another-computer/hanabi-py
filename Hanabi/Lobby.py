@@ -10,11 +10,11 @@ from Player import Player
 # Once all clients are ready the game will start (need at least 2 to start)
 #
 # Make a method to end the game and output desired info, and clean up the lobby in whatever way is needed
+# Possibly a segment where it waits for players to agree to rematch or all disconnect
+# Then it resets the lobby as needed, with a rematch method preserving the players and clients
 #
-# Possibly add a true_print or reveal method to Card so that we can easily print the true value without changing it's
+# Possibly add a true_print to Card so that we can easily print the true value without changing it's
 # clue status
-#
-# Double check how the game deals with playing a 5 at max clues
 #
 # Should I make variables like accepted_action and active_player a part of __init__ and self?
 
@@ -47,7 +47,8 @@ class Lobby(object):
 
         for color in colors:
             if color not in self.deck.excluded_colors:
-                self.foundations[color] = []
+                self.foundations[color] = Card(color, '0')
+                self.foundations[color] = self.foundations[color].reveal()
                 self.discard_pile[color] = []
 
         self.score = 0
@@ -151,8 +152,8 @@ class Lobby(object):
         card = self.players[input_list[0]].get_card(input_list[2])
         card.reveal()
 
-        if len(self.foundations[card.color]) == int(card.number) - 1:
-            self.foundations[card.color].append(card)
+        if int(self.foundations[card.color].number) == int(card.number) - 1:
+            self.foundations[card.color] = card
             self.score += 1
 
             if card.number == '5' and self.clues < 8:
@@ -243,4 +244,3 @@ if __name__ == '__main__':
     test.players = {'Andy': Player(), 'Spencer': Player()}
 
     test.start_game()
-    print('ok')

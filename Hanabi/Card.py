@@ -61,6 +61,8 @@ class Card(object):
         self.color_clue = True
         self.number_clue = True
 
+        return self
+
 
 if __name__ == '__main__':
 
