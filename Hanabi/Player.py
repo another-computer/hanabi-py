@@ -2,12 +2,9 @@ class Player(object):
 
     def __init__(self):
 
-        self.name = None
-
         self.hand = []
 
-    def associate_client(self, client_name):
-        self.name = client_name
+        self.ready = False
 
     def draw(self, drawn_card):
         self.hand.insert(0, drawn_card)

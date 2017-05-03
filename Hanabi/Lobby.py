@@ -2,6 +2,7 @@ from Deck import Deck
 from Card import Card
 from Card import colors
 from Player import Player
+import threading
 
 # TO-DO:
 # Replace the interpret_string method because there has to be a better way to handle that
@@ -22,27 +23,21 @@ from Player import Player
 class Lobby(object):
     def __init__(self):
 
-        self.status = None
+        self.commands = {'play': self.play, 'clue': self.use_clue, 'discard': self.discard}
 
         self.clients = []
 
-        # Want to add a state that the lobby sits in before starting the game, each player must ready to begin the game
-        # Does not include observers
-
         self.players = {}
+        self.ready_players = 0
 
-        for client in self.clients:
-            self.players[client.name] = Player()
+        self.current_player = None
+        self.accepted_action = False
 
         self.difficulty = 'Normal'
 
         self.deck = Deck(self.difficulty)
 
         self.discard_pile = {}
-
-        self.clues = 8
-        self.mistakes = 0
-
         self.foundations = {}
 
         for color in colors:
@@ -51,15 +46,16 @@ class Lobby(object):
                 self.foundations[color] = self.foundations[color].reveal()
                 self.discard_pile[color] = []
 
+        self.clues = 8
+        self.mistakes = 0
         self.score = 0
 
         self.turn_number = 1
 
-    def client_join(self, client):
-        self.clients.append(client)
-        self.players[client.name] = Player()
+    def add_player(self, client):
+        self.players[client] = Player()
 
-    def client_leave(self, client):
+    def remove_player(self, client):
         self.players.pop(client.name)
         self.clients.pop(client)
 
@@ -69,10 +65,12 @@ class Lobby(object):
         self.players[name].draw(new_card)
 
     # input_string is 'client_name action arg1 (arg2)'
-    def interpret_string(self, input_string):
+    '''def interpret_string(self, active_player, input_string):
         input_list = input_string.split()
+        input_list[0] = input_list[0].lstrip('/')
+        print(input_list)
 
-        if input_list[1].lower() == 'help':
+        if input_list[0].lower() == 'help':
             print('Accepted commands include:\n '
                   'play card_location; location ranges from 1 - 5 for your hand(leftmost card is 1)\n '
                   'discard card_location; location ranges from 1-5 for your hand (leftmost card is 1)\n '
@@ -80,29 +78,29 @@ class Lobby(object):
                   'type can be any number from 1-5 or any valid color\n')
             return False
 
-        elif input_list[1].lower() == 'play':
-            if input_list[2].isdigit() is True:
-                if int(input_list[2]) < 1 or int(input_list[2]) > len(self.players[input_list[0]].hand):
+        elif input_list[0].lower() == 'play':
+            if input_list[1].isdigit() is True:
+                if int(input_list[1]) < 1 or int(input_list[1]) > len(self.players[active_player].hand):
                     print('THE CARD LOCATION MUST BE IN YOUR HAND MY DUDE')
                     return False
 
                 else:
-                    self.play(input_list)
+                    self.play(active_player, input_list)
                     return True
 
             else:
                 print('CARD LOCATION IS A NUMBER M\'DOOD')
                 return False
 
-        elif input_list[1].lower() == 'discard':
+        elif input_list[0].lower() == 'discard':
             if self.clues < 8:
-                if input_list[2].isdigit() is True:
-                    if int(input_list[2]) < 1 or int(input_list[2]) > len(self.players[input_list[0]].hand):
+                if input_list[1].isdigit() is True:
+                    if int(input_list[1]) < 1 or int(input_list[1]) > len(self.players[active_player].hand):
                         print('THE CARD LOCATION MUST BE IN YOUR HAND MATE')
                         return False
 
                     else:
-                        self.discard(input_list)
+                        self.discard(active_player, input_list)
                         return True
 
                 else:
@@ -113,23 +111,23 @@ class Lobby(object):
                 print('YOU CAN\'T HAVE MORE THAN 8 CLUES')
                 return False
 
-        elif input_list[1].lower() == 'clue':
-            if len(input_list) == 4:
+        elif input_list[0].lower() == 'clue':
+            if len(input_list) == 3:
                 if self.clues > 0:
-                    if input_list[0] == input_list[2]:
+                    if active_player == input_list[1]:
                         print('YOU CAN\'T CLUE YOURSELF BRAH')
                         return False
 
-                    if input_list[2] not in self.players.keys():
+                    if input_list[1] not in self.players.keys():
                         print('THE PLAYER YOU\'RE CLUING NEEDS TO BE IN THE LOBBY HOMIE')
                         return False
 
-                    if input_list[3].isdigit() is True:
-                        if int(input_list[3]) < 1 or int(input_list[3]) > 5:
+                    if input_list[2].isdigit() is True:
+                        if int(input_list[2]) < 1 or int(input_list[2]) > 5:
                             print('THE CLUE MUST BE 1, 2, 3, 4, OR 5 DOG')
                             return False
 
-                    elif input_list[3].lower() not in self.foundations.keys():
+                    elif input_list[2].lower() not in self.foundations.keys():
                         print('THE CLUED COLOR MUST BE IN THE GAME BOI')
                         return False
 
@@ -146,10 +144,27 @@ class Lobby(object):
 
         else:
             print('not a valid action. enter \'help\' for a list of commands')
+            return False'''
+
+    def play(self, active_player, input_list):
+
+        if active_player != self.current_player:
+            print('It\'s not your turn')
             return False
 
-    def play(self, input_list):
-        card = self.players[input_list[0]].get_card(input_list[2])
+        if input_list[0].isdigit() is True:
+            if int(input_list[0]) < 1 or int(input_list[0]) > len(self.players[active_player].hand):
+                print('THE CARD LOCATION MUST BE IN YOUR HAND MY DUDE')
+                return False
+
+            else:
+                pass
+
+        else:
+            print('CARD LOCATION IS A NUMBER M\'DOOD')
+            return False
+
+        card = self.players[active_player].get_card(input_list[0])
         card.reveal()
 
         if int(self.foundations[card.color].number) == int(card.number) - 1:
@@ -163,24 +178,86 @@ class Lobby(object):
             self.discard_pile[card.color].append(card)
             self.mistakes += 1
 
-        self.draw(input_list[0])
+        self.draw(active_player)
 
-    def discard(self, input_list):
-        card = self.players[input_list[0]].get_card(input_list[2])
+        return True
+
+    def discard(self, active_player, input_list):
+
+        if active_player != self.current_player:
+            print('It\'s not your turn')
+            return False
+
+        if self.clues < 8:
+            if input_list[0].isdigit() is True:
+                if int(input_list[0]) < 1 or int(input_list[0]) > len(self.players[active_player].hand):
+                    print('THE CARD LOCATION MUST BE IN YOUR HAND MATE')
+                    return False
+
+                else:
+                    pass
+
+            else:
+                print('CARD LOCATION IS A NUMBER M8')
+                return False
+
+        else:
+            print('YOU CAN\'T HAVE MORE THAN 8 CLUES')
+            return False
+
+        card = self.players[active_player].get_card(input_list[0])
         card.reveal()
 
         self.clues += 1
 
         self.discard_pile[card.color].append(card)
 
-        self.draw(input_list[0])
+        self.draw(active_player)
 
-    def use_clue(self, input_list):
+        return True
+
+    def use_clue(self, active_player, input_list):
+
+        if active_player != self.current_player:
+            print('It\'s not your turn')
+            return False
+
+        if len(input_list) == 3:
+            if self.clues > 0:
+                if active_player == input_list[1]:
+                    print('YOU CAN\'T CLUE YOURSELF BRAH')
+                    return False
+
+                if input_list[1] not in self.players.keys():
+                    print('THE PLAYER YOU\'RE CLUING NEEDS TO BE IN THE LOBBY HOMIE')
+                    return False
+
+                if input_list[2].isdigit() is True:
+                    if int(input_list[2]) < 1 or int(input_list[2]) > 5:
+                        print('THE CLUE MUST BE 1, 2, 3, 4, OR 5 DOG')
+                        return False
+
+                elif input_list[2].lower() not in self.foundations.keys():
+                    print('THE CLUED COLOR MUST BE IN THE GAME BOI')
+                    return False
+
+                pass
+
+            else:
+                print('not enough clues!')
+                return False
+
+        else:
+            print('clue needs 2 arguments')
+            return False
+
         self.clues -= 1
 
-        self.players[input_list[2]].receive_clue(input_list[3].lower())
+        self.players[input_list[0]].receive_clue(input_list[1].lower())
 
-    def start_game(self):
+        return True
+
+    '''def start_game(self):
         final_round = 0
 
         for name in self.players.keys():
@@ -188,20 +265,14 @@ class Lobby(object):
                 self.draw(name)
 
         while True:
+            self.clients = list(self.players.keys())
             active_player = self.clients[self.turn_number % len(self.clients)]
 
             accepted_action = False
 
             while accepted_action is False:
 
-                '''print(active_player.name)
-                print('Andy: {}\nSpencer: {}'.format(self.players['Andy'].hand, self.players['Spencer'].hand))
-                print('Cards Remaining: {}, Clues: {}, Mistakes: {}'.format(len(self.deck.cards), self.clues,
-                                                                            self.mistakes))
-                print(self.foundations)
-                print(self.discard_pile)'''
-
-                input_string = active_player.name
+                input_string = active_player
                 input_string += ' ' + input('What do?: ')
                 accepted_action = self.interpret_string(input_string)
 
@@ -222,7 +293,12 @@ class Lobby(object):
 
             self.turn_number += 1
 
-        self.end_game()
+        self.end_game()'''
+
+    def prepare_game(self):
+        for name in self.players.keys():
+            for count in range(5):
+                self.draw(name)
 
     def end_game(self):
         print(self.score)
@@ -236,11 +312,4 @@ class Client(object):
         self.name = name
 
 if __name__ == '__main__':
-    test = Lobby()
-    print(test.deck.cards[0])
-    print('')
-
-    test.clients = [Client('Andy'), Client('Spencer')]
-    test.players = {'Andy': Player(), 'Spencer': Player()}
-
-    test.start_game()
+    print('neat')
